@@ -13,7 +13,7 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-const { SHOPIFY_API_SECRET_KEY, SHOPIFY_API_KEY } = process.env;
+const { SHOPIFY_API_SECRET_KEY, SHOPIFY_API_KEY, SHOPIFY_API_ACCESS_TOKEN } = process.env;
 
 app.prepare().then(() => {
   const server = new Koa();
@@ -24,10 +24,11 @@ app.prepare().then(() => {
     createShopifyAuth({
       apiKey: SHOPIFY_API_KEY,
       secret: SHOPIFY_API_SECRET_KEY,
+      // access_token: SHOPIFY_API_ACCESS_TOKEN,
       scopes: ['read_products'],
       afterAuth(ctx) {
         const { shop, accessToken } = ctx.session;
-
+        console.log('shop', shop);
         ctx.redirect('/');
       },
     }),
