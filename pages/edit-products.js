@@ -40,6 +40,19 @@ class EditProduct extends React.Component {
     this.setState({ discount: this.itemToBeConsumed() });
   }
 
+  handleChange = (field, value) => {
+    return (value) => this.setState({ [field]: value });
+  };
+
+  itemToBeConsumed = () => {
+    const item = store.get('item');
+    const price = item.variants.edges[0].node.price;
+    const variantId = item.variants.edges[0].node.id;
+    const discounter = price * 0.1;
+    this.setState({ price, variantId });
+    return (price - discounter).toFixed(2);
+  };
+
   render() {
     const { name, price, discount, variantId } = this.state;
     return (
@@ -47,6 +60,8 @@ class EditProduct extends React.Component {
         mutation={UPDATE_PRICE}
       >
         {(handleSubmit, { error, data }) => {
+          console.log('error', error);
+          console.log('data', data);
           const showError = error && (
             <Banner status="critical">{error.message}</Banner>
           );
@@ -59,9 +74,7 @@ class EditProduct extends React.Component {
           return (
             <Page>
               <Layout>
-                {showToast}
                 <Layout.Section>
-                  {showError}
                 </Layout.Section>
                 <Layout.Section>
                   <DisplayText size="large">{name}</DisplayText>
@@ -79,7 +92,7 @@ class EditProduct extends React.Component {
                           <TextField
                             prefix="$"
                             value={discount}
-                            onChange={this.handleChange('discount')}
+                            onChange={this.handleChange('discount', discount)}
                             label="Discounted price"
                             type="discount"
                           />
@@ -119,19 +132,6 @@ class EditProduct extends React.Component {
       </Mutation>
     );
   }
-
-  handleChange = (field) => {
-    return (value) => this.setState({ [field]: value });
-  };
-
-  itemToBeConsumed = () => {
-    const item = store.get('item');
-    const price = item.variants.edges[0].node.price;
-    const variantId = item.variants.edges[0].node.id;
-    const discounter = price * 0.1;
-    this.setState({ price, variantId });
-    return (price - discounter).toFixed(2);
-  };
 }
 
 export default EditProduct;

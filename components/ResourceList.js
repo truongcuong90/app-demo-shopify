@@ -61,7 +61,8 @@ class ResourceListWithProducts extends React.Component {
         {({ data, loading, error }) => {
           if (loading) { return <div>Loading…</div>; }
           if (error) { return <div>{error.message}</div>; }
-          console.log(data);
+          if (!data.nodes[0]) { return <div> <p>No data</p> </div>; }
+
           return (
             <Card>
               <ResourceList
